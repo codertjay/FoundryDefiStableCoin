@@ -2,5 +2,8 @@
 src = "src"
 out = "out"
 libs = ["lib"]
+remappings = ["@chainlink/contracts=lib/chainlink-brownie-contracts", "@openzeppelin/contracts=lib/openzeppelin-contracts/contracts"]
 
 # See more config options https://github.com/foundry-rs/foundry/tree/master/config
+#import {ERC20Burnable, ERC20} from "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/ERC20Burnable.sol";
+#import {Ownable} from "lib/openzeppelin-contracts/contracts/access/Ownable.sol";
