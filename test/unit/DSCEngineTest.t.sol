@@ -15,6 +15,7 @@ contract DSCEngineTest is Test {
     DSCEngine dsce;
     HelperConfig config;
     address ethUsdPriceFeed;
+    address btcUsdPriceFeed;
     address weth;
 
     address public USER = makeAddr("user");
@@ -25,10 +26,28 @@ contract DSCEngineTest is Test {
 
         deployer = new DeployDSC();
         (dsc, dsce, config) = deployer.run();
-        (ethUsdPriceFeed,, weth,,) = config.activeNetworkConfig();
+        (ethUsdPriceFeed, btcUsdPriceFeed, weth,,) = config.activeNetworkConfig();
 
-        ERC20Mock(weth).mint(USER,STARTING_ERC20_BALANCE );
+        ERC20Mock(weth).mint(USER, STARTING_ERC20_BALANCE);
     }
+    //////////////////////////////
+    /// Constructor Tests ////////
+    //////////////////////////////
+    address[] public tokenAddresses;
+    address[] public priceFeedAddresses;
+
+
+    function testRevertIfTokenLengthDoesntMatchPriceFeeds() public {
+        tokenAddresses.push(weth);
+        priceFeedAddresses.push(ethUsdPriceFeed);
+        priceFeedAddresses.push(btcUsdPriceFeed);
+
+        vm.expectRevert(DSCEngine.DSCEngine__TokenAddressesAndPriceFeedsMustBeEqualLength.selector);
+
+        new DSCEngine(tokenAddresses, priceFeedAddresses, address(dsc));
+
+    }
+
     //////////////////////////////
     /// Price Tests /////////////
     //////////////////////////////
@@ -45,7 +64,7 @@ contract DSCEngineTest is Test {
     /// DepositCollateral Tests///
     //////////////////////////////
 
-    function testReverIfCollateralZero() public {
+    function testRevertIfCollateralZero() public {
         vm.startPrank(USER);
         ERC20Mock(weth).approve(address(dsce), AMOUNT_COLLATERAL);
 
